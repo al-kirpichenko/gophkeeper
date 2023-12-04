@@ -3,7 +3,7 @@ package api
 import (
 	"gorm.io/gorm"
 
-	"github.com/al-kirpichenko/gophkeeper/cmd/server/config"
+	"github.com/al-kirpichenko/gophkeeper/cmd/config"
 	"github.com/al-kirpichenko/gophkeeper/internal/database"
 )
 
