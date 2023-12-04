@@ -13,33 +13,33 @@ type User struct {
 	Password string `gorm:"size:255;not null"`
 }
 
-type LP struct {
+type Psw struct {
 	gorm.Model
-	UserID   string
-	Login    string
-	Password string
-	Comment  string
+	UserID   string `gorm:"size:255;not null"`
+	Login    string `gorm:"size:255;not null"`
+	Password string `gorm:"size:255;not null"`
+	Comment  string `gorm:"size:255;not null"`
 }
 
 type Text struct {
 	gorm.Model
-	UserID  string
-	Text    string
-	Comment string
+	UserID  string `gorm:"size:255;not null"`
+	Text    string `gorm:"size:3000;not null"`
+	Comment string `gorm:"size:255;not null"`
 }
 
 type Binary struct {
 	gorm.Model
-	UserID  string
-	Binary  []byte
-	Comment string
+	UserID  string `gorm:"size:255;not null"`
+	Binary  []byte `gorm:"not null"`
+	Comment string `gorm:"size:255;not null"`
 }
 
 type Card struct {
 	gorm.Model
-	UserID  string
-	Number  string
-	Date    string
-	CVV     int
+	UserID  string `gorm:"size:255;not null"`
+	Number  string `gorm:"size:22;not null"`
+	Date    string `gorm:"size:8;not null"`
+	CVV     int    `gorm:"size:3;not null"`
 	Comment string
 }

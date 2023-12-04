@@ -6,6 +6,8 @@ import (
 	"gorm.io/gorm"
 
 	"gorm.io/driver/postgres"
+
+	"github.com/al-kirpichenko/gophkeeper/internal/models"
 )
 
 func InitDB(conf string) *gorm.DB {
@@ -14,6 +16,22 @@ func InitDB(conf string) *gorm.DB {
 
 	if err != nil {
 		log.Fatal("Failed to connect to database!")
+	}
+
+	errUser := db.AutoMigrate(&models.User{})
+
+	if errUser != nil {
+		log.Println("Failed to migrate user to database!")
+		log.Fatal(err)
+		return nil
+	}
+
+	errMigrate := db.AutoMigrate(&models.User{}, &models.Psw{}, &models.Binary{}, &models.Card{}, &models.Text{})
+
+	if errMigrate != nil {
+		log.Println("Failed migrate to database!")
+		log.Fatal(err)
+		return nil
 	}
 
 	return db
