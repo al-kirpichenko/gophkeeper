@@ -5,12 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/al-kirpichenko/gophkeeper/internal/database"
 	"github.com/al-kirpichenko/gophkeeper/internal/models"
-	"github.com/al-kirpichenko/gophkeeper/internal/services"
 )
 
-// Register - регистрация нового пользователя
+// Register - хэндлер регистрации нового пользователя
 func (s *Server) Register(ctx *gin.Context) {
 
 	var auth *models.Auth
@@ -19,31 +17,12 @@ func (s *Server) Register(ctx *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := services.HashPassword(auth.Password)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
-
-	newUser := models.User{
-		Login:    auth.Login,
-		Password: hashedPassword,
-	}
-
-	err = database.CreateUser(s.DB, &newUser)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
-
-	token, err := services.GenerateToken(newUser.ID)
+	err := s.AuthService.CreateUser(auth)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"token": token, "message": "the user is registered"})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "the new user has been successfully registered!"})
 }

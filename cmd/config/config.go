@@ -1,6 +1,9 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const (
 	Host       = "localhost:8080"
@@ -13,6 +16,7 @@ const (
 type Config struct {
 	Host        string
 	DataBaseURI string
+	TokenTTL    time.Duration
 }
 
 func NewConfig() *Config {
@@ -21,5 +25,6 @@ func NewConfig() *Config {
 		Host: Host,
 		DataBaseURI: fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
 			DBhost, DBuser, DBpassword, DBname),
+		TokenTTL: 10 * time.Hour,
 	}
 }
