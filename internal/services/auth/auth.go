@@ -23,7 +23,7 @@ type Auth struct {
 
 // UserProvider -
 type UserProvider interface {
-	CreateUser(auth *models.Auth) error
+	CreateUser(user *models.User) error
 	GetUser(login string) (*models.User, error)
 }
 
@@ -47,7 +47,7 @@ func (a *Auth) CreateUser(auth *models.Auth) error {
 
 	a.log.Info("registering user")
 
-	passHash, err := bcrypt.GenerateFromPassword(auth.Password, bcrypt.DefaultCost)
+	passHash, err := bcrypt.GenerateFromPassword([]byte(auth.Password), bcrypt.DefaultCost)
 
 	if err != nil {
 		a.log.Error("failed to generate password hash", sl.Err(err))
@@ -55,9 +55,12 @@ func (a *Auth) CreateUser(auth *models.Auth) error {
 		return fmt.Errorf("%s: %w", "Auth.RegisterNewUser.CreatePassHash", err)
 	}
 
-	auth.Password = passHash
+	user := &models.User{
+		Login:    auth.Login,
+		Password: passHash,
+	}
 
-	err = a.usrProvider.CreateUser(auth)
+	err = a.usrProvider.CreateUser(user)
 
 	if err != nil {
 		a.log.Error("Auth.Register: ", sl.Err(err))

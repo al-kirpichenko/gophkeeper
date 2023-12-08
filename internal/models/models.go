@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 // Auth - содержит данные для регистрации/ аутентификации
 type Auth struct {
 	Login    string `json:"login"  binding:"required"`
-	Password []byte `json:"password"  binding:"required"`
+	Password string `json:"password"  binding:"required"`
 }
 
 // User - модель пользователя

@@ -13,6 +13,8 @@ func (s *Server) Register(ctx *gin.Context) {
 
 	var auth *models.Auth
 	if err := ctx.ShouldBindJSON(&auth); err != nil {
+
+		s.Log.Info("Dont read json")
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}

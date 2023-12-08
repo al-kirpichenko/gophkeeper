@@ -27,9 +27,9 @@ func NewStorage(conf string) *Storage {
 }
 
 // CreateUser - создает нового пользователья в бд
-func (s *Storage) CreateUser(auth *models.Auth) error {
+func (s *Storage) CreateUser(user *models.User) error {
 
-	result := s.db.Create(auth)
+	result := s.db.Create(user)
 
 	if result.Error != nil && errors.Is(result.Error, ErrConflict) {
 		return ErrConflict
