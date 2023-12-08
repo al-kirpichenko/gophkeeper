@@ -16,7 +16,7 @@ type Keeper struct {
 // SecretProvider -
 type SecretProvider interface {
 	CreateSecret(secret *models.Secret) error
-	ReadSecret(title string) (*models.Secret, error)
+	ReadSecret(title string, uid uint) (*models.Secret, error)
 }
 
 // NewKeeper - конструктор
@@ -44,4 +44,20 @@ func (k *Keeper) CreateSecret(secret *models.Secret) error {
 		return fmt.Errorf("%s: %w", "Keeper.Create: ", err)
 	}
 	return nil
+}
+
+func (k *Keeper) ReadSecret(title string, uid uint) (*models.Secret, error) {
+
+	k.log.Info("read secret")
+
+	secret, err := k.provider.ReadSecret(title, uid)
+
+	if err != nil {
+		k.log.Error("Keeper.Read: ", sl.Err(err))
+
+		return nil, fmt.Errorf("%s: %w", "Keeper.Create: ", err)
+	}
+
+	return secret, nil
+
 }

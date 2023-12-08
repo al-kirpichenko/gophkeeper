@@ -16,6 +16,7 @@ func Router(server *api.Server) *gin.Engine {
 	{
 		auth.Use(middleware.Auth())
 		auth.POST("/api/secret/create", server.CreateSecret)
+		auth.POST("/api/secret/read", server.ReadSecret)
 	}
 	r.POST("/api/user/register", server.Register)
 	r.POST("/api/user/login", server.Login)

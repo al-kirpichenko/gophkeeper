@@ -11,8 +11,7 @@ import (
 
 // ErrConflict - для ошибок вставки
 var (
-	ErrConflict     = errors.New("duplicate key value violates unique")
-	ErrUserNotFound = errors.New("user not found")
+	ErrConflict = errors.New("duplicate key value violates unique")
 )
 
 type Storage struct {
@@ -46,8 +45,8 @@ func (s *Storage) ReadUser(login string) (*models.User, error) {
 
 	result := s.db.First(&user, "login = ?", login)
 
-	if result.Error != nil && errors.Is(result.Error, ErrUserNotFound) {
-		return nil, ErrUserNotFound
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
 	return user, nil
@@ -71,6 +70,15 @@ func (s *Storage) CreateSecret(secret *models.Secret) error {
 	return nil
 }
 
-func (s *Storage) ReadSecret(title string) (*models.Secret, error) {
-	return &models.Secret{}, nil
+func (s *Storage) ReadSecret(title string, uid uint) (*models.Secret, error) {
+
+	var secret *models.Secret
+
+	result := s.db.Where("title = ? AND user_id = ?", title, uid).Find(&secret)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return secret, nil
 }
