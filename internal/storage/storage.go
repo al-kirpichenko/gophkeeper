@@ -2,7 +2,6 @@ package storage
 
 import (
 	"errors"
-	"strings"
 
 	"gorm.io/gorm"
 
@@ -11,7 +10,10 @@ import (
 )
 
 // ErrConflict - для ошибок вставки
-var ErrConflict = errors.New("conflict on inserting new record")
+var (
+	ErrConflict     = errors.New("duplicate key value violates unique")
+	ErrUserNotFound = errors.New("user not found")
+)
 
 type Storage struct {
 	db *gorm.DB
@@ -29,7 +31,7 @@ func (s *Storage) CreateUser(auth *models.Auth) error {
 
 	result := s.db.Create(auth)
 
-	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+	if result.Error != nil && errors.Is(result.Error, ErrConflict) {
 		return ErrConflict
 	} else if result.Error != nil {
 		return result.Error
@@ -39,5 +41,14 @@ func (s *Storage) CreateUser(auth *models.Auth) error {
 
 // GetUser - возвращает модель User по логину
 func (s *Storage) GetUser(login string) (*models.User, error) {
-	return &models.User{}, nil
+
+	var user *models.User
+
+	result := s.db.First(&user, "login = ?", login)
+
+	if result.Error != nil && errors.Is(result.Error, ErrUserNotFound) {
+		return nil, ErrUserNotFound
+	}
+
+	return user, nil
 }
