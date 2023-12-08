@@ -9,7 +9,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/al-kirpichenko/gophkeeper/cmd/config"
+	"github.com/al-kirpichenko/gophkeeper/cmd/server/config"
 	"github.com/al-kirpichenko/gophkeeper/internal/api"
 	"github.com/al-kirpichenko/gophkeeper/internal/router"
 )
