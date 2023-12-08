@@ -26,9 +26,10 @@ func NewServer(config *config.Config) *Server {
 	store := storage.NewStorage(config.DataBaseURI)
 
 	return &Server{
-		Config:      config,
-		Storage:     store,
-		Log:         log,
-		AuthService: auth.NewAuth(log, store, config.TokenTTL),
+		Config:        config,
+		Storage:       store,
+		Log:           log,
+		AuthService:   auth.NewAuth(log, store, config.TokenTTL),
+		KeeperService: keeper.NewKeeper(log, store),
 	}
 }

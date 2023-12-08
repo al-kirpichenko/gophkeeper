@@ -16,15 +16,15 @@ import (
 
 // Auth - сервис регистрации и аутентификации
 type Auth struct {
-	log         *slog.Logger
-	usrProvider UserProvider
-	tokenTTL    time.Duration
+	log      *slog.Logger
+	provider UserProvider
+	tokenTTL time.Duration
 }
 
 // UserProvider -
 type UserProvider interface {
 	CreateUser(user *models.User) error
-	GetUser(login string) (*models.User, error)
+	ReadUser(login string) (*models.User, error)
 }
 
 var ErrInvalidCredentials = errors.New("invalid credentials")
@@ -32,13 +32,13 @@ var ErrInvalidCredentials = errors.New("invalid credentials")
 // NewAuth - конструктор
 func NewAuth(
 	log *slog.Logger,
-	userProvider UserProvider,
+	provider UserProvider,
 	tokenTTL time.Duration,
 ) *Auth {
 	return &Auth{
-		usrProvider: userProvider,
-		log:         log,
-		tokenTTL:    tokenTTL, // Время жизни возвращаемых токенов
+		provider: provider,
+		log:      log,
+		tokenTTL: tokenTTL, // Время жизни возвращаемых токенов
 	}
 }
 
@@ -60,7 +60,7 @@ func (a *Auth) CreateUser(auth *models.Auth) error {
 		Password: passHash,
 	}
 
-	err = a.usrProvider.CreateUser(user)
+	err = a.provider.CreateUser(user)
 
 	if err != nil {
 		a.log.Error("Auth.Register: ", sl.Err(err))
@@ -77,7 +77,7 @@ func (a *Auth) Login(auth *models.Auth) (string, error) {
 	a.log.Info("login user")
 
 	// Достаём пользователя из БД
-	user, err := a.usrProvider.GetUser(auth.Login)
+	user, err := a.provider.ReadUser(auth.Login)
 
 	if err != nil {
 		a.log.Error("Auth.Login: ", sl.Err(err))

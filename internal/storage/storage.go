@@ -26,7 +26,7 @@ func NewStorage(conf string) *Storage {
 	}
 }
 
-// CreateUser - создает нового пользователья в бд
+// CreateUser  - создает нового пользователья в бд
 func (s *Storage) CreateUser(user *models.User) error {
 
 	result := s.db.Create(user)
@@ -39,8 +39,8 @@ func (s *Storage) CreateUser(user *models.User) error {
 	return nil
 }
 
-// GetUser - возвращает модель User по логину
-func (s *Storage) GetUser(login string) (*models.User, error) {
+// ReadUser - возвращает модель User по логину
+func (s *Storage) ReadUser(login string) (*models.User, error) {
 
 	var user *models.User
 
@@ -51,4 +51,26 @@ func (s *Storage) GetUser(login string) (*models.User, error) {
 	}
 
 	return user, nil
+}
+
+// CreateSecret - создает новый секрет пользователя
+func (s *Storage) CreateSecret(secret *models.Secret) error {
+
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(secret).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil && errors.Is(err, ErrConflict) {
+		return ErrConflict
+	} else if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Storage) ReadSecret(title string) (*models.Secret, error) {
+	return &models.Secret{}, nil
 }
