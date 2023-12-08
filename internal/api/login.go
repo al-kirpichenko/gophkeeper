@@ -17,4 +17,14 @@ func (s *Server) Login(ctx *gin.Context) {
 		return
 	}
 
+	token, err := s.AuthService.Login(auth)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	ctx.Writer.Header().Set("Authorization", token)
+	ctx.JSON(http.StatusCreated, gin.H{"message": "the user has logged in"})
+
 }

@@ -72,12 +72,12 @@ func (a *Auth) CreateUser(auth *models.Auth) error {
 }
 
 // Login - аутентификация пользователя
-func (a *Auth) Login(login string, psw []byte) (string, error) {
+func (a *Auth) Login(auth *models.Auth) (string, error) {
 
 	a.log.Info("login user")
 
 	// Достаём пользователя из БД
-	user, err := a.usrProvider.GetUser(login)
+	user, err := a.usrProvider.GetUser(auth.Login)
 
 	if err != nil {
 		a.log.Error("Auth.Login: ", sl.Err(err))
@@ -86,7 +86,7 @@ func (a *Auth) Login(login string, psw []byte) (string, error) {
 	}
 
 	// Проверяем корректность полученного пароля
-	if err := bcrypt.CompareHashAndPassword(user.Password, psw); err != nil {
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(auth.Password)); err != nil {
 		a.log.Info("invalid credentials", sl.Err(err))
 
 		return "", fmt.Errorf("%s: %w", "Auth.Login: ", ErrInvalidCredentials)
