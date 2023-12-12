@@ -1,19 +1,20 @@
+// Package main точка входа
 package main
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/al-kirpichenko/gophkeeper/cmd/client/cfg"
-	"github.com/al-kirpichenko/gophkeeper/internal/client"
+	"github.com/al-kirpichenko/gophkeeper/internal/client/commands"
+)
+
+// Данные о клиенте
+var (
+	buildVersion string = "0.01"
+	buildDate    string = "2023-12-12"
 )
 
 func main() {
-
-	conf := cfg.NewCfg()
-
-	cli := client.NewClient(conf)
-
-	cli.Welcome()
-
-	os.Exit(0)
+	fmt.Println("Client version: " + buildVersion)
+	fmt.Println("Build: " + buildDate)
+	commands.Execute()
 }

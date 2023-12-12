@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,8 +13,6 @@ func Auth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		token := ctx.GetHeader("Authorization")
-		log.Println(token)
-
 		if token == "" {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return

@@ -17,9 +17,9 @@ type User struct {
 
 // Secret - модель хранимого секрета
 type Secret struct {
-	gorm.Model
-	UserID  uint   `gorm:"not null;index:,unique,composite:uid"`
-	Title   string `gorm:"size:255;not null;index:,unique,composite:uid" json:"title"`
-	Content []byte `gorm:"not null" json:"content"`
-	Comment string `gorm:"size:255;not null"`
+	gorm.Model `json:"-"`
+	UserID     uint   `gorm:"not null;index:,unique,composite:uid" json:"-"`
+	Title      string `gorm:"size:255;not null;index:,unique,composite:uid" json:"title"`
+	Content    []byte `gorm:"not null" json:"content"`
+	Comment    string `gorm:"size:255;" json:"comment"`
 }
