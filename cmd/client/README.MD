@@ -73,6 +73,11 @@ go run main.go keeper create -t google.com -u username -p password
 ```
 go run main.go keeper create -t Сбербанк1 -n "1234 5678 9876 5432" -d 12/26 -c 111
 ```
+Пример добавления произвольного файла ( считывается и хранится в виде бинарных данных):
+```
+go run main.go keeper create -t "файл" -b temp/1.jpg
+```
+
 ### Получение данных
 
 Получение данных осуществляется с помощью команды get
