@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/al-kirpichenko/gophkeeper/internal/client/models"
+	"github.com/al-kirpichenko/gophkeeper/internal/utils/binary"
 )
 
 // createCmd represents the create command
@@ -18,7 +19,7 @@ var (
 
 			secret := &models.Secret{}
 
-			title := cmd.Flag("title").Value.String()
+			secret.Title = cmd.Flag("title").Value.String()
 			secret.Username = cmd.Flag("username").Value.String()
 			secret.Password = cmd.Flag("password").Value.String()
 			secret.Comment = cmd.Flag("comment").Value.String()
@@ -26,9 +27,17 @@ var (
 			secret.Date = cmd.Flag("date").Value.String()
 			secret.Text = cmd.Flag("string").Value.String()
 			secret.Cvv = cmd.Flag("cvv").Value.String()
-			secret.Binary = []byte(cmd.Flag("bin").Value.String())
+			secret.FilePath = cmd.Flag("bin").Value.String()
+			if secret.FilePath != "" {
+				bin, err := binary.ReadFile(secret.FilePath)
+				if err != nil {
+					fmt.Println(err)
+					return err
+				}
 
-			err := keeperService.Create(title, secret)
+				secret.Binary = bin
+			}
+			err := keeperService.Create(secret)
 			if err != nil {
 				fmt.Println(err)
 				return err

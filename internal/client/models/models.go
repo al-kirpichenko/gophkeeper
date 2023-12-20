@@ -1,15 +1,11 @@
 package models
 
-type SecretResponse struct {
-	Title   string `json:"title"`
-	Content []byte `json:"content"`
-}
-
 type CreateResponse struct {
 	Message string `json:"message"`
 }
 
 type Secret struct {
+	Title    string `json:"title,omitempty"`
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`
 	Comment  string `json:"comment,omitempty"`
@@ -18,6 +14,7 @@ type Secret struct {
 	Date     string `json:"date,omitempty"`
 	Cvv      string `json:"cvv,omitempty"`
 	Binary   []byte `json:"binary,omitempty"`
+	FilePath string `json:"path,omitempty"`
 }
 
 type Auth struct {

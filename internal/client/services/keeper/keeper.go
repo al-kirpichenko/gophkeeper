@@ -1,10 +1,7 @@
 package keeper
 
 import (
-	"bytes"
 	"crypto/tls"
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -18,8 +15,8 @@ import (
 
 // KeeperService is an interface that provides methods for authentication and registration.
 type KeeperService interface {
-	Create(title string, secret *models.Secret) error
-	Get(title string) (string, error)
+	Create(secret *models.Secret) error
+	Get(title string) (*models.Secret, error)
 
 	// GetClient returns the service's client.
 	GetClient() *resty.Client
@@ -45,18 +42,7 @@ func NewKeeperService(baseURL string) KeeperService {
 	return &keeperService{client: client}
 }
 
-func encodeToBase64(v *models.Secret) ([]byte, error) {
-	var buf bytes.Buffer
-	encoder := base64.NewEncoder(base64.StdEncoding, &buf)
-	err := json.NewEncoder(encoder).Encode(v)
-	if err != nil {
-		return nil, err
-	}
-	encoder.Close()
-	return buf.Bytes(), nil
-}
-
-func (k *keeperService) Create(title string, secret *models.Secret) error {
+func (k *keeperService) Create(secret *models.Secret) error {
 
 	r := &models.CreateResponse{}
 
@@ -64,17 +50,11 @@ func (k *keeperService) Create(title string, secret *models.Secret) error {
 
 	token := tokenStorage.GetToken()
 
-	content, err := encodeToBase64(secret)
-
-	if err != nil {
-		return err
-	}
-
 	resp, err := k.client.R().
 		SetResult(r).
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", token).
-		SetBody(fmt.Sprintf(`{"title":"%s","content":"%s"}`, title, content)).
+		SetBody(secret).
 		Post("/api/secret/create")
 	if err != nil {
 		return err
@@ -87,9 +67,9 @@ func (k *keeperService) Create(title string, secret *models.Secret) error {
 }
 
 // Get authenticates a user with the given username and password and returns an authentication token if successful.
-func (k *keeperService) Get(title string) (string, error) {
+func (k *keeperService) Get(title string) (*models.Secret, error) {
 
-	r := &models.SecretResponse{}
+	r := &models.Secret{}
 
 	tokenStorage := storage.New()
 
@@ -102,19 +82,13 @@ func (k *keeperService) Get(title string) (string, error) {
 		SetBody(fmt.Sprintf(`{"title":"%s"}`, title)).
 		Post("/api/secret/read")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if resp.StatusCode() != http.StatusOK {
-		return "", err
+		return nil, err
 	}
 
-	myString := strings.ReplaceAll(string(r.Content), "{", "")
-	myString = strings.ReplaceAll(myString, "}", "")
-
-	if err != nil {
-		return "", err
-	}
-	return myString, nil
+	return r, nil
 }
 
 // GetClient returns the service's client.

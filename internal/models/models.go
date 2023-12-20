@@ -20,6 +20,14 @@ type Secret struct {
 	gorm.Model `json:"-"`
 	UserID     uint   `gorm:"not null;index:,unique,composite:uid" json:"-"`
 	Title      string `gorm:"size:255;not null;index:,unique,composite:uid" json:"title"`
-	Content    []byte `gorm:"not null" json:"content"`
 	Comment    string `gorm:"size:255;" json:"comment"`
+
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Text     string `json:"text,omitempty"`
+	Number   string `json:"number,omitempty"`
+	Date     string `json:"date,omitempty"`
+	Cvv      string `json:"cvv,omitempty"`
+	Binary   []byte `json:"binary,omitempty"`
+	FilePath string `json:"path,omitempty"`
 }

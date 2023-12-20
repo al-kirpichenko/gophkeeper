@@ -2,8 +2,12 @@ package keeper
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/al-kirpichenko/gophkeeper/internal/client/utils"
 )
 
 // getCmd represents the get command
@@ -18,7 +22,15 @@ var getCmd = &cobra.Command{
 			fmt.Println(err)
 			return err
 		}
-		fmt.Println(secret)
+		if secret.Binary != nil {
+			err = os.WriteFile(secret.FilePath, secret.Binary, 0644)
+			if err != nil {
+				log.Printf("Failed writing to file: %s\n", err)
+			}
+			fmt.Println("secret: " + secret.Title + " the file has been saved in " + secret.FilePath)
+		} else {
+			utils.ShowResult(secret)
+		}
 		return nil
 	},
 }
